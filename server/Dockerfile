@@ -2,6 +2,6 @@ FROM python:3
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 CMD ["python", "./server.py"]

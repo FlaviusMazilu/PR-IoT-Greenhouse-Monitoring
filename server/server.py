@@ -2,18 +2,21 @@ from paho.mqtt import client as mqtt_client
 import influxdb_client
 import json
 import os
+import logging
 
-database = os.getenv('INFLUXDB_DATABASE_NAME')
-org = os.getenv('INFLUXDB_ORG')
-token = os.environ.get('INFLUXDB_TOKEN') 
-url = os.environ.get('INFLUXDB_URL')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+database = 'greenhouse'
+org = 'priot'
+token = 't7YjD517EApA2sS0vhxHyJfSw0zQ6I9D6kQ4ksf8lFgIaP9goSBhIdhItrm6sGq8VB_K7Su7wo9eujIqPbqNQQ=='
+url = 'https://influx:8086'
 
 client = influxdb_client.InfluxDBClient(
     url=url,
     token=token,
     org=org
 )
-
+print("here")
 write_api = client.write_api()
 
 broker = os.environ.get('MQTT_BROKER_URL')
@@ -29,6 +32,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 def on_message(client, userdata, msg):
     message = json.loads(msg.payload.decode('utf-8'))
+    logging.info(f'message received: {message}')
     
     try:
         value = message.get('value')
@@ -43,17 +47,17 @@ def on_message(client, userdata, msg):
     
     if topic == mqtt_topic_temperature and value != -9999:
         p = influxdb_client.Point("temperature").tag("sensor_id", sensor_id).field("value", value)
-        write_api.write(bucket="measurements", org=org, record=p)
+        write_api.write(bucket="measurements2", org=org, record=p)
 
     if topic == mqtt_topic_light:
         p = influxdb_client.Point("light").tag("sensor_id", sensor_id).field("value", value)
-        write_api.write(bucket="measurements", org=org, record=p)
+        write_api.write(bucket="measurements2", org=org, record=p)
 
  
 mqttc = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION2, client_id=mqtt_client_id)
 mqttc.on_connect = on_connect
 mqttc.on_message = on_message
 
-mqttc.connect(broker, port, 60)
+mqttc.connect('mosquitto', port, 1883)
 
 mqttc.loop_forever()

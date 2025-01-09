@@ -1,4 +1,15 @@
 services:
+  influx:
+    image: influxdb:latest
+    volumes:
+      - db_data:/var/lbi/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminadmin
+      - DOCKER_INFLUXDB_INIT_ORG=priot
+      - DOCKER_INFLUXDB_INIT_BUCKET=measurements
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=t7YjD517EApA2sS0vhxHyJfSw0zQ6I9D6kQ4ksf8lFgIaP9goSBhIdhItrm6sGq8VB_K7Su7wo9eujIqPbqNQQ==
   grafana:
     image: grafana/grafana
     ports:
@@ -7,6 +18,8 @@ services:
       - './grafana/data:/var/lib/grafana'
       - ./grafana/config/grafana:/etc/grafana
       - ./grafana/plugins:/var/lib/grafana/plugins
+    depends_on:
+      - influx
   mosquitto:
     image: eclipse-mosquitto
     volumes:
@@ -26,3 +39,7 @@ services:
       MQTT_BROKER_PORT: $MQTT_BROKER_PORT
     depends_on:
       - mosquitto
+      - influx
+
+volumes:
+  db_data:

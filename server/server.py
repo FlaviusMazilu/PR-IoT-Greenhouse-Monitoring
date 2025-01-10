@@ -27,8 +27,6 @@ mqtt_topic_temperature = 'greenhouse/temperature'
 mqtt_topic_light = 'greenhouse/light'
 mqtt_client_id = "server"
 
-
-
 def on_connect(client, userdata, flags, reason_code, properties):
     print(f"Connected with result code {reason_code}")
     client.subscribe(mqtt_topic_subscribed)
@@ -54,7 +52,7 @@ def on_message(client, userdata, msg):
 
     if topic == mqtt_topic_light:
         p = influxdb_client.Point("light").tag("sensor_id", sensor_id).field("value", value)
-        write_api.write(bucket="measurements", org=org, record=p)
+        write_api.write(bucket="measurements", org=org, record=p)        
 
  
 mqttc = mqtt_client.Client(mqtt_client.CallbackAPIVersion.VERSION2, client_id=mqtt_client_id)

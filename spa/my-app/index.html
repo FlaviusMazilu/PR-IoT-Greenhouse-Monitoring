@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+       let isLightOn = true;
+       let isTempOn = true;
+
+       let urlLight = "http://localhost:8080/light";
+       let urlTemp = "http://localhost:8080/temp";
+        function toggleLightState() {
+            // Toggle the state
+            isLightOn = !isLightOn;
+
+            // Update the button text and display state
+            const buttonLight = document.getElementById("lightButton");
+
+            if (isLightOn) {
+                buttonLight.textContent = "Turn Off";
+                fetch(`${urlLight}/off`, {method: "POST"})
+            } else {
+                buttonLight.textContent = "Turn On";
+                fetch(`${urlLight}/on`, {method: "POST"})
+            }
+        }
+
+        function toggleTempState() {
+            // Toggle the state
+            isTempOn = !isTempOn;
+
+            // Update the button text and display state
+            const buttonTemp = document.getElementById("tempButton");
+
+            if (isTempOn) {
+                buttonTemp.textContent = "Turn Off";
+                fetch(`${urlTemp}/off`, {method: "POST"})
+            } else {
+                buttonTemp.textContent = "Turn On";
+                fetch(`${urlTemp}/on`, {method: "POST"})
+            }
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <iframe src="http://localhost:3000/d-solo/fe9ln255gum80a/luminozitate?orgId=1&timezone=browser&theme=dark&panelId=1&__feature.dashboardSceneSolo" width="450" height="200" frameborder="0"></iframe>
+        <button id="lightButton" onclick="toggleLightState()">Turn On</button>
+    </div>
+    <div>
+        <iframe src="http://localhost:3000/d-solo/ee9ln5j0j0oowd/temperatura?orgId=1&timezone=browser&panelId=1&__feature.dashboardSceneSolo" width="450" height="200" frameborder="0"></iframe>
+        <button id="tempButton" onclick="toggleTempState()">Turn On</button>
+    </div>
+
+</body>
+</html>

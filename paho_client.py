@@ -6,7 +6,7 @@ from time import sleep
 import sys, getopt
 
 broker = 'localhost'
-port = 1883
+port = 1884
 topic_temperatures = 'greenhouse/temperature'
 topic_light = 'greenhouse/temperatures'
 

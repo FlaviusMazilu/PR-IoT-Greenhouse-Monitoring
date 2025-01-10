@@ -3,6 +3,9 @@ services:
     image: influxdb:latest
     volumes:
       - db_data:/var/lbi/influxdb2
+      - ./influxdb:/etc/ssl/influxdb:ro
+    ports:
+      - "8086:8086"
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=admin
@@ -10,6 +13,9 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=priot
       - DOCKER_INFLUXDB_INIT_BUCKET=measurements
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=t7YjD517EApA2sS0vhxHyJfSw0zQ6I9D6kQ4ksf8lFgIaP9goSBhIdhItrm6sGq8VB_K7Su7wo9eujIqPbqNQQ==
+      - INFLUXD_HTTP_HTTPS_ENABLED=true
+      - INFLUXD_TLS_CERT=/etc/ssl/influxdb/influxdb.crt
+      - INFLUXD_TLS_KEY=/etc/ssl/influxdb/influxdb.key
   grafana:
     image: grafana/grafana
     ports:
@@ -24,12 +30,17 @@ services:
     image: eclipse-mosquitto
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/mosquitto.crt:/mosquitto/config/mosquitto.crt
+      - ./mosquitto/mosquitto.key:/mosquitto/config/mosquitto.key
+
     ports:
-      - "1883:1883"
+      - "1884:8883"
   local_server:
     build:
       context: ./server
       dockerfile: Dockerfile
+    volumes:
+      - ./influxdb:/mycerts
     environment:
       INFLUXDB_DATABASE_NAME: $INFLUXDB_DATABASE_NAME
       INFLUXDB_URL: $INFLUXDB_URL

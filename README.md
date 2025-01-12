@@ -43,3 +43,5 @@ Proiectul presupune un sistem de monitorizare a calitatii ambientale intr-un sol
 ### Repository
 https://github.com/FlaviusMazilu/PR-IoT-Greenhouse-Monitoring
 ![alt text](image-5.png)
+
+### Provocări și Soluții

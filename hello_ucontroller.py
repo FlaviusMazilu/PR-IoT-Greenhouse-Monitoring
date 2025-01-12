@@ -21,6 +21,8 @@ MODE_NORMAL = 0x27
 
 REG_CALIB = 0x88
 
+topic_subscribed = 'controlplane/#'
+
 def init_sensor():
 	i2c.writeto_mem(address, REG_CONTROL, bytes([MODE_NORMAL]))
 	time.sleep(0.5)
@@ -112,6 +114,8 @@ ssid = 'flavius_mazilu'
 password = 'prego123'
 mqtt_server = '172.20.10.2'
 topic = "greenhouse/temperature"
+topic2 = "greenhouse/light"
+
 client_id = "sensor_begin"
 
 our_topic = "greenhouse/temperature"
@@ -124,12 +128,30 @@ while not wlan.isconnected():
 
 print(wlan.ifconfig())
  
-client = MQTTClient(client_id, mqtt_server, port=1883)
+sending_temp = True
+sending_light = True
+
+client = MQTTClient(client_id, mqtt_server, port=1884)
 client.connect()
+
+def received_message(topic, msg):
+	global sending_temp
+	global sending_light
+	message = json.loads(msg.decode('utf-8'))
+
+	if topic == 'controlplane/temp':
+		sending_temp = True if message["value"] == "on" else False
+	if topic == 'controlplane/light':
+		sending_light = True if message["value"] == "on" else False
+
+client.set_callback(received_message)
+
+client.subscribe(topic_subscribed)
+
+
 print("Connected to MQTT broker")
 try:
 	while True:
-		# message = b"Hello World"
 		raw_temp = read_raw_temp()
 		raw_press = read_raw_press()
 
@@ -137,10 +159,17 @@ try:
 		press = compensate_pressure(raw_press, calibration_data, t_fine)
 		
 		message = f"{temp}"
-    	
-		payload = {"sender_id": client_id, "value": temp}
-		client.publish(topic, json.dumps(payload))
-		print(f"has sent temperature {temp}")
+
+		if sending_light == True:
+			payload = {"sender_id": client_id, "value": temp}
+			client.publish(topic, json.dumps(payload))
+			print(f"has sent temperature {temp}")
+
+		if sending_temp == True:
+			payload = {"sender_id": client_id, "value": press}
+			client.publish(topic2)
+			print(f"has sent light {temp}")
+
 		time.sleep(1)
 finally:
 	client.disconnect()

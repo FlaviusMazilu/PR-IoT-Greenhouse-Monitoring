@@ -54,9 +54,9 @@ services:
     depends_on:
       - mosquitto
       - influx
-  web:
+  api:
     build:
-      context: ./web
+      context: ./api
       dockerfile: Dockerfile
     ports:
       - "8080:8080"

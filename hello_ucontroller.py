@@ -135,18 +135,22 @@ client = MQTTClient(client_id, mqtt_server, port=1884)
 client.connect()
 
 def received_message(topic, msg):
+	print("received message")
 	global sending_temp
 	global sending_light
 	message = json.loads(msg.decode('utf-8'))
-
+	# print("message is " + message + " topic is " + topic)
+	print(message)
+	print(f"topic is {topic}")
+	topic = topic.decode('utf-8')
 	if topic == 'controlplane/temp':
 		sending_temp = True if message["value"] == "on" else False
 	if topic == 'controlplane/light':
 		sending_light = True if message["value"] == "on" else False
 
 client.set_callback(received_message)
-
-client.subscribe(topic_subscribed)
+client.subscribe('controlplane/temp')
+client.subscribe('controlplane/light')
 
 
 print("Connected to MQTT broker")
@@ -160,16 +164,16 @@ try:
 		
 		message = f"{temp}"
 
-		if sending_light == True:
-			payload = {"sender_id": client_id, "value": temp}
+		if sending_temp == True:
+			payload = {"sender_id": client_id, "value": float(temp)}
 			client.publish(topic, json.dumps(payload))
 			print(f"has sent temperature {temp}")
 
-		if sending_temp == True:
-			payload = {"sender_id": client_id, "value": press}
-			client.publish(topic2)
-			print(f"has sent light {temp}")
-
+		if sending_light == True:
+			payload = {"sender_id": client_id, "value": float(press)}
+			client.publish(topic2, json.dumps(payload))
+			print(f"has sent light {press}")
+		client.check_msg()
 		time.sleep(1)
 finally:
 	client.disconnect()

@@ -22,6 +22,8 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/grafana.crt:/etc/grafana/grafana.crt
+      - ./grafana/grafana.key:/etc/grafana/grafana.key
     depends_on:
       - influx
     environment:
@@ -62,7 +64,6 @@ services:
       - "8080:8080"
     depends_on:
       - mosquitto
-
 volumes:
   db_data:
   grafana_data:

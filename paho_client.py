@@ -57,14 +57,14 @@ while True:
     print(random_integer)
     
     if is_sending_temp_value:
-        payload = {"sender_id": client_id, "value": random_integer}
+        payload = {"sender_id": client_id, "value": float(random_integer)}
         mqttc.publish('greenhouse/temperature', json.dumps(payload))
         print("I've sent a temp val")
 
 
     random_integer = random.randint(1800, 2000)
     if is_sending_light_value:
-        payload = {"sender_id": client_id, "value": random_integer}
+        payload = {"sender_id": client_id, "value": float(random_integer)}
         mqttc.publish('greenhouse/light', json.dumps(payload))
         print("I've sent a light val")
 

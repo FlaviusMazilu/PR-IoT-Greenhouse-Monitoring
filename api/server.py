@@ -40,4 +40,4 @@ def turn_light(signal: str):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080, ssl_context='adhoc')
+    app.run(debug=True, host='0.0.0.0', port=8080)

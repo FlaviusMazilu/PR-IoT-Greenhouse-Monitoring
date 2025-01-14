@@ -1,2 +1,2 @@
 #!/bin/bash
-openssl req -x509 -newkey rsa:2048 -nodes -keyout mosquitto.key -out mosquitto.crt -days 365 -subj "/C=RO/ST=Bucharest/L=Bucharest/O=mosquitto/OU=mosquitto/CN=mosquitto" -addext "subjectAltName=DNS:mosquitto"
+openssl req -x509 -newkey rsa:2048 -nodes -keyout localhost.key -out localhost.crt -days 365 -subj "/C=RO/ST=Bucharest/L=Bucharest/O=localhost/OU=localhost/CN=localhost" -addext "subjectAltName=DNS:localhost"
